@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segmentación VLAN y pfSense - Flujo Vivo</title>
+    
+    <!-- Cargar Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Efectos hover sutiles para tarjetas periféricas */
+        .smart-card-hover { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .smart-card-hover:hover { transform: scale(1.03) translateY(-3px); z-index: 50; }
+        
+        /* Efecto hover más fuerte SOLO para pfSense (jerarquía) */
+        .pfsense-hover { transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .pfsense-hover:hover { transform: scale(1.05) translateY(-5px); }
+
+        /* Leds de actividad */
+        @keyframes blink-led { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; box-shadow: 0 0 8px currentColor; } }
+        .led-active { animation: blink-led 1.5s infinite alternate; }
+        
+        /* Animación de partículas (puntos redondeados moviéndose) */
+        @keyframes flow-particles { to { stroke-dashoffset: -30; } }
+        .particle-flow { 
+            stroke-dasharray: 0 15; 
+            stroke-linecap: round; 
+            animation: flow-particles 0.8s linear infinite; 
+        }
+
+        /* Estilos base REPARADOS */
+        body { 
+            margin: 0; 
+            background-color: #e2e8f0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; 
+        }
+        
+        .slide { 
+            width: 100%; 
+            max-width: 1600px; 
+            min-height: 900px; 
+            display: flex; 
+            flex-direction: column; 
+            background-color: #fafafa; 
+            border-radius: 1rem; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); 
+        }
+    </style>
+</head>
+<body>
+
+<section class="slide items-center justify-center px-8 relative overflow-hidden">
+    
+    <!-- Resplandor de fondo -->
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] bg-gradient-to-r from-blue-50 via-slate-50 to-orange-50 rounded-full blur-3xl opacity-70 pointer-events-none"></div>
+
+    <!-- Título de la Diapositiva -->
+    <div class="mb-4 text-center z-20 w-full mt-12">
+        <span class="text-orange-600 font-bold uppercase tracking-[12px] mb-2 block text-xs">CONTROL DE TRÁFICO</span>
+        <h2 class="text-4xl sm:text-5xl font-extrabold text-slate-900 italic tracking-tighter uppercase leading-none drop-shadow-sm">SEGMENTACIÓN_<span class="text-orange-600">VLAN</span></h2>
+        <div class="w-12 h-1 bg-gradient-to-r from-orange-500 to-blue-500 mx-auto mt-4 rounded-full"></div>
+    </div>
+
+    <!-- ==========================================
+         CONTENEDOR DEL DIAGRAMA
+         ========================================== -->
+    <div class="w-full max-w-[1300px] h-[520px] relative z-10 mt-6 mx-auto">
+        
+        <!-- CABLES DE RED (CURVAS Y PARTÍCULAS) -->
+        <svg class="absolute inset-0 w-full h-full z-0 pointer-events-none" viewBox="0 0 1000 500" preserveAspectRatio="none">
+            
+            <!-- 1. RUTAS BASE (Líneas tenues de fondo) -->
+            <!-- Izquierda a pfSense -->
+            <path d="M 210,60 C 295,60 295,250 380,250" stroke="#e2e8f0" stroke-width="2" fill="none" />
+            <path d="M 210,250 L 380,250" stroke="#e2e8f0" stroke-width="2" fill="none" />
+            <path d="M 210,440 C 295,440 295,250 380,250" stroke="#e2e8f0" stroke-width="2" fill="none" />
+            
+            <!-- pfSense a Derecha -->
+            <path d="M 620,250 C 705,250 705,60 790,60" stroke="#e2e8f0" stroke-width="2" fill="none" />
+            <path d="M 620,250 L 790,250" stroke="#e2e8f0" stroke-width="2" fill="none" />
+            <path d="M 620,250 C 705,250 705,440 790,440" stroke="#e2e8f0" stroke-width="2" fill="none" />
+
+            <!-- 2. PARTÍCULAS ANIMADAS (El flujo vivo) -->
+            <!-- Izquierda a pfSense -->
+            <path d="M 210,60 C 295,60 295,250 380,250" class="particle-flow" stroke="#f97316" stroke-width="3.5" fill="none" filter="drop-shadow(0 0 3px rgba(249,115,22,0.6))" />
+            <path d="M 210,250 L 380,250" class="particle-flow" stroke="#3b82f6" stroke-width="3.5" fill="none" filter="drop-shadow(0 0 3px rgba(59,130,246,0.6))" />
+            <path d="M 210,440 C 295,440 295,250 380,250" class="particle-flow" stroke="#22c55e" stroke-width="3.5" fill="none" filter="drop-shadow(0 0 3px rgba(34,197,94,0.6))" />
+            
+            <!-- pfSense a Derecha -->
+            <path d="M 620,250 C 705,250 705,60 790,60" class="particle-flow" stroke="#64748b" stroke-width="3.5" fill="none" />
+            <path d="M 620,250 L 790,250" class="particle-flow" stroke="#22c55e" stroke-width="3.5" fill="none" filter="drop-shadow(0 0 3px rgba(34,197,94,0.6))" />
+            <path d="M 620,250 C 705,250 705,440 790,440" class="particle-flow" stroke="#3b82f6" stroke-width="3.5" fill="none" filter="drop-shadow(0 0 3px rgba(59,130,246,0.6))" />
+        </svg>
+
+        <!-- ==========================================
+             ETIQUETAS DE CONEXIÓN
+             ========================================== -->
+        <div class="absolute top-[16%] left-[29%] transform -translate-x-1/2 -translate-y-1/2 bg-white/90 backdrop-blur border border-slate-100 shadow-sm px-2 py-0.5 z-10 rounded text-center">
+            <span class="text-[8px] font-black text-orange-600 uppercase tracking-widest block">Datos IoT</span>
+        </div>
+
+        <div class="absolute top-[46%] left-[29%] transform -translate-x-1/2 -translate-y-1/2 bg-white/90 backdrop-blur border border-slate-100 shadow-sm px-2 py-0.5 z-10 rounded text-center">
+            <span class="text-[8px] font-black text-blue-600 uppercase tracking-widest block">Tráfico CCTV</span>
+        </div>
+
+        <div class="absolute top-[84%] left-[29%] transform -translate-x-1/2 -translate-y-1/2 bg-white/90 backdrop-blur border border-slate-100 shadow-sm px-2 py-0.5 z-10 rounded text-center">
+            <span class="text-[8px] font-black text-green-600 uppercase tracking-widest block">Control de acceso</span>
+        </div>
+
+        <div class="absolute top-[46%] left-[71%] transform -translate-x-1/2 -translate-y-1/2 bg-white/90 backdrop-blur border border-slate-100 shadow-sm px-2 py-0.5 z-10 rounded text-center">
+            <span class="text-[8px] font-black text-green-600 uppercase tracking-widest block">Eventos MQTT</span>
+        </div>
+
+        <div class="absolute top-[84%] left-[71%] transform -translate-x-1/2 -translate-y-1/2 bg-white/90 backdrop-blur border border-slate-100 shadow-sm px-2 py-0.5 z-10 rounded text-center">
+            <span class="text-[8px] font-black text-blue-600 uppercase tracking-widest block">Salida segura a cloud</span>
+        </div>
+
+        <!-- ==========================================
+             COLUMNA 1: DISPOSITIVOS (Izquierda)
+             ========================================== -->
+        <!-- SENSOR IoT -->
+        <div class="absolute top-[12%] left-0 transform -translate-y-1/2 w-[21%]">
+            <div class="hardware-card smart-card-hover flex items-center justify-between p-3.5 bg-white border border-slate-200 rounded-xl shadow-md">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-orange-50 border border-orange-100 flex items-center justify-center">
+                        <i data-lucide="cpu" class="w-5 h-5 text-orange-500"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-[11px] font-black text-slate-800 uppercase tracking-widest leading-tight">SENSOR IoT</span>
+                        <span class="w-fit border border-orange-200 text-orange-600 bg-orange-50 px-2 py-0.5 mt-1 rounded text-[7.5px] font-black tracking-wider">VLAN 10</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CÁMARAS DE SEGURIDAD -->
+        <div class="absolute top-[50%] left-0 transform -translate-y-1/2 w-[21%]">
+            <div class="hardware-card smart-card-hover flex items-center justify-between p-3.5 bg-white border border-slate-200 rounded-xl shadow-md">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center">
+                        <i data-lucide="cctv" class="w-5 h-5 text-blue-500"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-[11px] font-black text-slate-800 uppercase tracking-widest leading-tight">CÁMARAS CCTV</span>
+                        <span class="w-fit border border-blue-200 text-blue-600 bg-blue-50 px-2 py-0.5 mt-1 rounded text-[7.5px] font-black tracking-wider">VLAN 20</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DATÁFONOS -->
+        <div class="absolute top-[88%] left-0 transform -translate-y-1/2 w-[21%]">
+            <div class="hardware-card smart-card-hover flex items-center justify-between p-3.5 bg-white border border-slate-200 rounded-xl shadow-md">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-green-50 border border-green-100 flex items-center justify-center">
+                        <i data-lucide="credit-card" class="w-5 h-5 text-green-500"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-[11px] font-black text-slate-800 uppercase tracking-widest leading-tight">DATÁFONOS</span>
+                        <span class="w-fit border border-green-200 text-green-600 bg-green-50 px-2 py-0.5 mt-1 rounded text-[7.5px] font-black tracking-wider">VLAN 30</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             COLUMNA 2: PFSENSE (Centro Principal)
+             ========================================== -->
+        <div class="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 w-[26%]">
+            <div class="bg-[#0f172a] border-[3px] border-blue-500 rounded-3xl p-8 shadow-[0_0_60px_-15px_rgba(59,130,246,0.6)] text-center w-full relative group pfsense-hover">
+                
+                <div class="absolute inset-0 bg-blue-500/10 group-hover:bg-blue-500/20 transition-all rounded-3xl pointer-events-none"></div>
+                
+                <div class="bg-slate-800 w-20 h-20 mx-auto rounded-full flex items-center justify-center border-2 border-slate-600 shadow-inner mb-5 relative z-10">
+                    <i data-lucide="shield" class="w-10 h-10 text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.9)]"></i>
+                </div>
+                
+                <h5 class="text-[18px] font-black text-white uppercase tracking-[0.15em] mb-2 relative z-10">PFSENSE FIREWALL</h5>
+                
+                <div class="mt-4 pt-3 border-t border-slate-700 relative z-10">
+                    <p class="text-[10px] font-bold text-blue-300 uppercase tracking-[0.2em] leading-relaxed">
+                        Routing / Seguridad<br>Control de tráfico
+                    </p>
+                </div>
+                
+                <div class="absolute top-5 right-6 flex gap-1.5">
+                    <div class="w-2.5 h-2.5 rounded-full bg-blue-500 led-active"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             COLUMNA 3: SALIDAS Y CONEXIONES (Derecha)
+             ========================================== -->
+        <!-- PROXMOX / BACKEND -->
+        <div class="absolute top-[12%] right-0 transform -translate-y-1/2 w-[21%]">
+            <div class="hardware-card smart-card-hover flex items-center p-3.5 bg-white border border-slate-200 rounded-xl shadow-md gap-4">
+                <div class="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center">
+                    <i data-lucide="server" class="w-5 h-5 text-slate-600"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[11px] font-black text-slate-800 uppercase tracking-widest leading-tight">PROXMOX / BACKEND</span>
+                    <span class="text-[7.5px] font-bold text-slate-400 mt-1 uppercase tracking-widest">Procesamiento Interno</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- BROKER MQTT -->
+        <div class="absolute top-[50%] right-0 transform -translate-y-1/2 w-[21%]">
+            <div class="hardware-card smart-card-hover flex items-center p-3.5 bg-white border border-green-200 rounded-xl shadow-md gap-4">
+                <div class="w-10 h-10 rounded-lg bg-green-50 border border-green-100 flex items-center justify-center">
+                    <i data-lucide="activity" class="w-5 h-5 text-green-500"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[11px] font-black text-slate-800 uppercase tracking-widest leading-tight">BROKER MQTT</span>
+                    <span class="text-[7.5px] font-bold text-slate-400 mt-1 uppercase tracking-widest">En tiempo real</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- VPN CLOUD -->
+        <div class="absolute top-[88%] right-0 transform -translate-y-1/2 w-[21%]">
+            <div class="hardware-card smart-card-hover flex items-center p-3.5 bg-[#0f172a] border border-blue-400 rounded-xl shadow-[0_10px_25px_-5px_rgba(59,130,246,0.3)] gap-4 relative overflow-hidden">
+                <div class="absolute inset-0 bg-blue-500/10 pointer-events-none"></div>
+                <div class="w-10 h-10 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center relative z-10">
+                    <i data-lucide="cloud" class="w-4 h-4 text-blue-400"></i>
+                </div>
+                <div class="flex flex-col relative z-10">
+                    <span class="text-[11px] font-black text-white uppercase tracking-widest leading-tight">VPN IPsec &rarr; CLOUD</span>
+                    <span class="text-[7.5px] font-bold text-blue-300 mt-1 uppercase tracking-widest">Conexión Externa</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Inicialización de iconos de Lucide -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    lucide.createIcons();
+</script>
+
+</body>
+</html>

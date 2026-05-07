@@ -1,0 +1,144 @@
+/* =======================================================================
+   1. VARIABLES GLOBALES (LIGHT PREMIUM)
+   ======================================================================= */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;0,800;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;600;700;900&display=swap');
+
+:root {
+    --bg-base: #f1f5f9; /* Gris suave de fondo */
+    --bg-card: #ffffff; /* Blanco puro para cajas */
+    --border-card: #cbd5e1;
+    --shadow-soft: 0 8px 30px rgba(15, 23, 42, 0.08);
+    --text-dark: #0f172a;
+    --text-muted: #475569;
+    --orange-horse: #ea580c;
+    --tech-blue: #3b82f6;
+    --security-green: #16a34a;
+}
+
+/* =======================================================================
+   2. ANIQUILAR FONDOS OSCUROS EN TODAS LAS SECCIONES
+   ======================================================================= */
+/* Atacamos directamente al body y a todas las secciones .slide, tengan el ID que tengan */
+body, 
+body .slide, 
+body section[id*="slide"], 
+body section[id*="azure"], 
+body section[id*="pipeline"] {
+    background-color: var(--bg-base) !important;
+    background-image: none !important;
+    color: var(--text-dark) !important;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Matar los degradados espaciales del QR y de Azure */
+body .atmosphere, 
+body .cloud-container-svg,
+body #canvas-area::before { 
+    display: none !important; 
+}
+
+/* Selecciones de texto */
+::selection { background: rgba(234, 88, 12, 0.2); color: var(--text-dark); }
+::-moz-selection { background: rgba(234, 88, 12, 0.2); color: var(--text-dark); }
+
+/* =======================================================================
+   3. RESCATE DE TEXTOS (FORZAR A OSCURO)
+   ======================================================================= */
+body h1, body h2, body h3, body h4, 
+body .title-gradient, body .main-title, body .title-top, body .title-bottom,
+body [class*="text-slate-900"], body [class*="text-white"],
+body [style*="color: #f8fafc"], body [style*="color: #fff"], body [style*="color: white"],
+body .hw4-device-card p.font-black, body .hw4-proxmox-card h2, body .hw4-azure-node h4, 
+body .card-title, body .db-hdr-title, body .rack-name, body .db-stat-key, body .db-stat-val, 
+body .mod-title, body .title-abs, body .arch-label, body #pipeline-scaler h2 {
+    color: var(--text-dark) !important;
+    -webkit-text-fill-color: var(--text-dark) !important;
+    background: none !important;
+    text-shadow: none !important;
+}
+
+/* Textos secundarios a gris oscuro */
+body p, body .text-slate-500, body .text-slate-400, body .text-slate-300,
+body .db-hdr-sub, body .rack-sub, body .sql-line, body .badge, body .vnet-tag, body .subnet-tag,
+body .arch-sublabel, body .arch-text, body .node-label, body .node-sub, body .sec-badge, body .flow-lbl {
+    color: var(--text-muted) !important;
+    -webkit-text-fill-color: var(--text-muted) !important;
+    text-shadow: none !important;
+}
+
+/* Acentos naranjas y colores de marca intactos */
+body h1 span, body h2 span, body .title-gradient span, body .title-top b, 
+body .text-orange-600, body [style*="color: #ea580c"] { 
+    color: var(--orange-horse) !important; 
+    -webkit-text-fill-color: var(--orange-horse) !important; 
+}
+body .text-blue-500 { color: var(--tech-blue) !important; -webkit-text-fill-color: var(--tech-blue) !important; }
+body .text-green-500 { color: var(--security-green) !important; -webkit-text-fill-color: var(--security-green) !important; }
+
+/* =======================================================================
+   4. CONTENEDORES PREMIUM (BLANCOS CON SOMBRA)
+   ======================================================================= */
+/* Slide 1, 2, 3 (Generales) */
+body .hardware-card, body .glass-panel, body .layer-row, body .img-circle {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-card) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+
+/* Slide 4 (Topología) */
+body .hw4-clean-card, body .hw4-proxmox-card, body .hw4-pfsense-node, body .hw4-cloud-icon-box {
+    background: var(--bg-card) !important;
+    backdrop-filter: none !important;
+    border: 1px solid var(--border-card) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+body .hw4-pfsense-node { border: 2px solid var(--tech-blue) !important; }
+body .hw4-rack-container { background: var(--bg-base) !important; border: 1px solid var(--border-card) !important; box-shadow: none !important; }
+body .hw4-vm-row { background: var(--bg-card) !important; border: 1px solid var(--border-card) !important; }
+body .mqtt-core-glow { background: #f0fdf4 !important; border-left: 4px solid var(--security-green) !important; box-shadow: none !important; }
+body .hw4-track-dirt { fill: var(--bg-card) !important; stroke: var(--border-card) !important; filter: drop-shadow(var(--shadow-soft)) !important; }
+
+/* Slide 5 (Azure) */
+body .card, body .mod-card, body .db-card, body #az-mod-onprem, body #az-mod-internet > div {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-card) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+body .card-hdr, body .db-hdr { background: var(--bg-base) !important; border-bottom: 1px solid var(--border-card) !important; }
+body .rack-body, body .db-body { background: var(--bg-card) !important; }
+body .rack-row, body .db-stat, body .sql-console { background: var(--bg-base) !important; border: 1px solid var(--border-card) !important; box-shadow: none !important; }
+body .escalon-fondo { background: linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.05) 10%, rgba(0,0,0,0.05) 90%, transparent 100%) !important; box-shadow: none !important; }
+body .subnet-wrapper { background: rgba(255,255,255,0.7) !important; border: 1px dashed var(--border-card) !important; }
+body .subnet-tag, body .vnet-tag, body .sec-badge, body .flow-lbl { background: var(--bg-card) !important; color: var(--text-dark) !important; border: 1px solid var(--border-card) !important; box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important; }
+
+/* Slide 7 (Pipeline) */
+body .arch-box, body .arch-pill { background: var(--bg-card) !important; border: 1px solid var(--border-card) !important; box-shadow: var(--shadow-soft) !important; }
+body .arch-box.core, body .core-active { border: 2px solid var(--security-green) !important; }
+body svg path { filter: none !important; } /* Apagar luces neón borrosas */
+
+/* Slide 8 (QR) */
+body .qr-box { background: var(--bg-card) !important; border: 1px solid var(--border-card) !important; box-shadow: var(--shadow-soft) !important; }
+body .qr-box img { filter: none !important; } /* Asegurar que el QR se vea bien */
+body .status-bar .badge { background: var(--bg-base) !important; border: 1px solid var(--border-card) !important; color: var(--text-muted) !important; }
+body .scan-bar { background: linear-gradient(to bottom, transparent, rgba(6, 182, 212, 0.1), rgba(6, 182, 212, 0.2), transparent) !important; }
+
+/* =======================================================================
+   5. TAMAÑOS DE TIPOGRAFÍAS Y ARREGLOS BASE
+   ======================================================================= */
+body h1, body h2:not(.card-title, .db-hdr-title, .vm-row-abs h2, .hw4-pfsense-node h2), 
+body .main-title, body .title-gradient, body #pipeline-scaler h2 {
+    font-family: 'JetBrains Mono', monospace !important; text-transform: uppercase !important; font-weight: 900 !important; font-style: italic !important; letter-spacing: 2px !important; text-align: center !important;
+}
+body .slide:first-child h1 { font-size: 3.5rem !important; }
+body h2, body .title-gradient { font-size: 2.2rem !important; }
+
+body .fixed.top-0.left-0 .bg-white { background-color: var(--bg-card) !important; border-color: var(--border-card) !important; box-shadow: var(--shadow-soft) !important; }
+#progress-bar { background: linear-gradient(to right, var(--tech-blue), var(--security-green)) !important; box-shadow: none !important; }
+
+/* Animaciones básicas de tu código original */
+.slide { display: none; height: 100vh; width: 100vw; opacity: 0; position: relative; }
+.slide.active { display: flex; opacity: 1; animation: slideIn 0.8s forwards; }
+.active .reveal-item { animation: contentReveal 0.6s both; }
+@keyframes slideIn { 0% { opacity: 0; transform: perspective(2000px) rotateY(-5deg) translateY(20px); filter: blur(10px); } 100% { opacity: 1; transform: perspective(2000px) rotateY(0) translateY(0); filter: blur(0); } }
+@keyframes contentReveal { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }

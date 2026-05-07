@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOSERBIT - Esquema de Infraestructura Híbrida</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --dev-blue: #1d4ed8; 
+            --ops-orange: #ea580c; 
+            --exec-green: #16a34a; 
+        }
+
+        body {
+            background-color: #ffffff;
+            font-family: 'JetBrains Mono', monospace;
+            color: #334155;
+            margin: 0; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .hud-grid { 
+            position: fixed; inset: 0; 
+            background-image: linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px); 
+            background-size: 50px 50px; z-index: -1; pointer-events: none; 
+        }
+
+        .mermaid-wrapper {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1), inset 0 0 20px rgba(0,0,0,0.02);
+            padding: 2.5rem;
+            width: 95%;
+            max-width: 1200px; /* Tamaño controlado para que quepa en pantalla */
+            margin-top: 130px; 
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .pill-label { 
+            position: absolute; top: -15px; left: 50%; transform: translateX(-50%); 
+            padding: 8px 30px; border-radius: 30px; font-size: 11px; font-weight: 800; 
+            letter-spacing: 3px; border: 1px solid #cbd5e1; background: #ffffff;
+            color: var(--dev-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-transform: uppercase; z-index: 20;
+        }
+
+        /* =========================================
+           ESTILOS MERMAID 
+           ========================================= */
+        .mermaid svg {
+            font-family: 'JetBrains Mono', monospace !important;
+            width: 100%; /* Ajuste automático al contenedor */
+            height: auto;
+        }
+        
+        .mermaid .node { cursor: pointer; outline: none; }
+
+        .mermaid .node rect, .mermaid .node circle, .mermaid .node polygon {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+        }
+
+        .mermaid .node:hover rect, .mermaid .node:hover circle, .mermaid .node:hover polygon {
+            transform: scale(1.05);
+            filter: drop-shadow(0 10px 15px rgba(29,78,216,0.15));
+            stroke: var(--dev-blue) !important;
+            stroke-width: 2.5px !important;
+        }
+
+        @keyframes clickPulse {
+            0% { transform: scale(1); filter: brightness(1); }
+            30% { transform: scale(1.1); filter: brightness(1.2); stroke: var(--exec-green) !important; stroke-width: 4px !important; }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+        .node-pulse rect, .node-pulse circle, .node-pulse polygon {
+            animation: clickPulse 0.4s ease-out !important;
+        }
+
+        .mermaid .edgePath path {
+            stroke-width: 2px !important;
+            stroke: #94a3b8 !important;
+        }
+
+        .mermaid .edgeLabel {
+            font-size: 11px !important;
+            font-weight: 800 !important;
+            background-color: #ffffff !important;
+            padding: 4px 10px !important;
+            border-radius: 6px !important;
+            border: 2px dashed #cbd5e1 !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hud-grid"></div>
+
+    <div class="fixed top-0 left-0 z-50">
+        <div class="bg-white p-4 pr-10 pb-6 rounded-br-[40px] shadow-lg border-slate-200 border-b border-r">
+            <img src="unilogoo.jpg" alt="UE" class="w-36 h-auto">
+        </div>
+    </div>
+
+    <div style="position: absolute; top: 30px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 30; width: 100%;">
+        <h2 class="text-slate-900 text-3xl sm:text-4xl font-black italic tracking-widest uppercase mt-4">FLUJO_<span style="color: #ea580c">APLICACIÓN</span></h2>
+        <div style="width: 6px; height: 6px; background: #ea580c; margin: 12px auto; box-shadow: 0 0 10px rgba(234,88,12,0.3);"></div>
+    </div>
+
+    <div class="mermaid-wrapper">
+        <div class="pill-label">ARQUITECTURA DE SOFTWARE (SISTEMA VIVO)</div>
+        <pre class="mermaid">
+---
+config:
+  layout: elk
+---
+flowchart LR
+  %% ==========================================
+  %% IZQUIERDA: DESARROLLO & SIMULACIÓN
+  %% ==========================================
+  subgraph L ["💻 DESARROLLO & SIMULACIÓN"]
+    direction TB
+    DEV["fa:fa-code Git / Código"]
+    PY["fa:fa-terminal Simulacion (Python)"]
+  end
+
+  %% ==========================================
+  %% CENTRO: NÚCLEO BACKEND Y DATOS
+  %% ==========================================
+  subgraph C ["⚙️ NÚCLEO BACKEND & DATOS"]
+    direction TB
+    BACK["fa:fa-server Nginx / Backend"]
+    DB["fa:fa-database Azure SQL DB"]
+    MQTT["fa:fa-share-nodes MQTT Broker"]
+  end
+
+  %% ==========================================
+  %% DERECHA: FRONTEND
+  %% ==========================================
+  subgraph R ["📱 FRONTEND"]
+    direction TB
+    WEB["fa:fa-mobile-screen Cliente Web (JS)"]
+  end
+
+  %% ==========================================
+  %% CONEXIONES Y FLUJOS VIVOS
+  %% ==========================================
+  
+  %% Flujos de entrada
+  DEV -->|"Despliegue"| BACK
+  PY -->|"Eventos carrera"| MQTT
+  
+  %% Flujos de Usuario (Web <-> Backend)
+  WEB -->|"Peticion HTTP"| BACK
+  BACK -->|"Respuesta HTTP"| WEB
+  
+  %% Flujos de Datos (Backend <-> DB)
+  BACK -->|"Escritura SQL"| DB
+  DB -->|"Datos SQL"| BACK
+  
+  %% Flujos Tiempo Real (Backend -> MQTT -> Web)
+  BACK -->|"Publica eventos"| MQTT
+  MQTT -->|"Tiempo real (WSS)"| WEB
+
+  %% ==========================================
+  %% ESTILOS DE NODOS
+  %% ==========================================
+  classDef dev fill:#f8fafc,stroke:#94a3b8,stroke-width:2px,color:#000
+  classDef py fill:#fff7ed,stroke:#ea580c,stroke-width:2px,color:#000
+  classDef bk fill:#e0f2fe,stroke:#2563eb,stroke-width:2px,color:#000
+  classDef db fill:#f3e8ff,stroke:#7c3aed,stroke-width:2px,color:#000
+  classDef mq fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#000
+  classDef wb fill:#ecfeff,stroke:#0891b2,stroke-width:2px,color:#000
+  classDef z fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,color:#334155,stroke-dasharray: 5 5
+
+  class DEV dev
+  class PY py
+  class BACK bk
+  class DB db
+  class MQTT mq
+  class WEB wb
+  class L,C,R z
+
+  %% ==========================================
+  %% ESTILOS DE LÍNEAS EXACTOS POR ÍNDICE
+  %% ==========================================
+  %% 0: DEV -> BACK (Gris Discontinuo)
+  linkStyle 0 stroke:#94a3b8,stroke-width:2px,stroke-dasharray: 5 5,color:#64748b
+  %% 1: PY -> MQTT (Naranja Ingesta)
+  linkStyle 1 stroke:#ea580c,stroke-width:3px,color:#ea580c
+  %% 2: WEB -> BACK (Azul Peticion)
+  linkStyle 2 stroke:#1d4ed8,stroke-width:3px,color:#1d4ed8
+  %% 3: BACK -> WEB (Azul Respuesta)
+  linkStyle 3 stroke:#1d4ed8,stroke-width:3px,color:#1d4ed8
+  %% 4: BACK -> DB (Morado SQL)
+  linkStyle 4 stroke:#7c3aed,stroke-width:2px,color:#7c3aed
+  %% 5: DB -> BACK (Morado SQL)
+  linkStyle 5 stroke:#7c3aed,stroke-width:2px,color:#7c3aed
+  %% 6: BACK -> MQTT (Verde Evento)
+  linkStyle 6 stroke:#16a34a,stroke-width:3px,color:#16a34a
+  %% 7: MQTT -> WEB (Verde Real-Time)
+  linkStyle 7 stroke:#16a34a,stroke-width:3px,color:#16a34a
+        </pre>
+    </div>
+
+    <!-- UI Inferior -->
+    <div class="fixed bottom-0 left-0 w-full h-[4px] bg-slate-200 z-50">
+        <div class="h-full bg-gradient-to-r from-blue-600 to-green-500 w-full"></div>
+    </div>
+
+    <!-- Scripts (Mermaid + Motor de Partículas Infalible) -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                fontFamily: 'JetBrains Mono',
+                primaryColor: '#ffffff',
+                primaryTextColor: '#1e293b',
+                primaryBorderColor: '#cbd5e1',
+                lineColor: '#94a3b8',
+                secondaryColor: '#f8fafc',
+                tertiaryColor: '#ffffff',
+                clusterBkg: 'transparent',
+                clusterBorder: '#cbd5e1'
+            }
+        });
+
+        class MermaidParticles {
+            constructor(svg, paths) {
+                this.svg = svg;
+                this.paths = paths;
+                this.particles = [];
+                this.init();
+            }
+
+            init() {
+                // Colores mapeados al tráfico
+                const colors = ['#64748b', '#ea580c', '#1d4ed8', '#1d4ed8', '#7c3aed', '#7c3aed', '#16a34a', '#16a34a'];
+
+                this.paths.forEach((path, i) => {
+                    const color = colors[i % colors.length];
+                    setInterval(() => {
+                        this.spawn(path, color);
+                    }, 1000 + Math.random() * 2000); 
+                });
+                this.animate();
+            }
+
+            spawn(path, color) {
+                const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                
+                const head = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                head.setAttribute("r", "4");
+                head.setAttribute("fill", color);
+                head.style.filter = `drop-shadow(0 0 4px ${color})`;
+                group.appendChild(head);
+                
+                const trails = [];
+                for(let i=0; i<3; i++){
+                    const t = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    t.setAttribute("r", 3 - i*0.8);
+                    t.setAttribute("fill", color);
+                    t.setAttribute("opacity", 0.6 - i*0.2);
+                    group.appendChild(t);
+                    trails.push(t);
+                }
+
+                this.svg.appendChild(group); 
+                
+                this.particles.push({
+                    el: group, head: head, trails: trails,
+                    path: path, len: path.getTotalLength(),
+                    progress: 0, speed: 0.003 + (Math.random() * 0.003) 
+                });
+            }
+
+            animate() {
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    let p = this.particles[i];
+                    p.progress += p.speed;
+                    
+                    if (p.progress > 1) {
+                        p.el.remove();
+                        this.particles.splice(i, 1);
+                        continue;
+                    }
+                    
+                    const headPos = p.path.getPointAtLength(p.progress * p.len);
+                    p.head.setAttribute("cx", headPos.x);
+                    p.head.setAttribute("cy", headPos.y);
+
+                    p.trails.forEach((t, idx) => {
+                        let tProg = p.progress - ((idx+1)*0.015);
+                        if(tProg < 0) tProg = 0;
+                        const tPos = p.path.getPointAtLength(tProg * p.len);
+                        t.setAttribute("cx", tPos.x);
+                        t.setAttribute("cy", tPos.y);
+                    });
+                }
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        let checkInterval = setInterval(() => {
+            const svg = document.querySelector('.mermaid svg');
+            if(svg) {
+                const nodes = svg.querySelectorAll('.node');
+                if(nodes.length > 0 && !svg.dataset.interactive) {
+                    svg.dataset.interactive = "true";
+                    nodes.forEach(node => {
+                        node.addEventListener('click', () => {
+                            node.classList.remove('node-pulse');
+                            void node.offsetWidth; 
+                            node.classList.add('node-pulse');
+                        });
+                    });
+                }
+
+                const paths = Array.from(svg.querySelectorAll('path')).filter(p => {
+                    try { return p.getTotalLength() > 50; } catch(e) { return false; }
+                });
+
+                if(paths.length > 0) {
+                    clearInterval(checkInterval);
+                    new MermaidParticles(svg, paths);
+                }
+            }
+        }, 500); 
+    </script>
+</body>
+</html>
