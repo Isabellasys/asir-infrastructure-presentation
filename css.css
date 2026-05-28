@@ -856,3 +856,28 @@ h1 *, h2 *, .main-title *, .title-gradient * {
     /* Aclaramos un pelín más como querías */
     background: linear-gradient(135deg, #1a335a 0%, #1c3a63 100%) !important;
 }
+@media print {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    html, body {
+        width: 1920px !important;
+        height: 1080px !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #0B1121 !important;
+    }
+
+    .slide {
+        width: 1920px !important;
+        height: 1080px !important;
+        page-break-after: always;
+        break-after: page;
+        overflow: hidden !important;
+        position: relative !important;
+    }
+}
