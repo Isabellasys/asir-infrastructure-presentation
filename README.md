@@ -1,5 +1,5 @@
 ASIR Infrastructure Presentation
-🚀 Descripción del Proyecto
+Descripción del Proyecto
 Documentación interactiva y arquitectónica del proyecto final del Grado Superior ASIR (Administración de Sistemas Informáticos en Red). Este repositorio contiene los recursos visuales y técnicos que explican la arquitectura de red híbrida y los flujos de automatización implementados en el proyecto HORSEBIT.
 
 🛠️ Stack Tecnológico
