@@ -1,23 +1,75 @@
-ASIR Infrastructure Presentation
-Descripción del Proyecto
-Documentación interactiva y arquitectónica del proyecto final del Grado Superior ASIR (Administración de Sistemas Informáticos en Red). Este repositorio contiene los recursos visuales y técnicos que explican la arquitectura de red híbrida y los flujos de automatización implementados en el proyecto HORSEBIT.
+# ASIR Infrastructure Presentation 🎓
 
-🛠️ Stack Tecnológico
-Frontend: HTML5, CSS3, JavaScript.
+Presentación web interactiva desarrollada como soporte para la defensa de mi Proyecto Final de ASIR.
 
-Infraestructura Base: Proxmox (Virtualización), Azure (Cloud Computing).
+El objetivo de esta presentación fue exponer de forma visual la arquitectura, tecnologías y procesos utilizados durante el desarrollo del proyecto, sustituyendo una presentación tradicional por una versión web accesible desde cualquier dispositivo.
 
-Automatización & GitOps: Pipeline CI/CD automatizado mediante GitHub y Netlify.
+## 🌐 Presentación Online
 
-⚡ Automatización (CI/CD Pipeline)
-Este proyecto cuenta con un flujo de despliegue automatizado. Cada vez que se realiza un push a la rama master, se ejecutan las siguientes acciones:
+https://asir-infrastructure-presentation.netlify.app
 
-Webhook Trigger: GitHub notifica a Netlify sobre el nuevo código.
+---
 
-Build Process: El sistema detecta y compila los archivos estáticos.
+## Sobre el proyecto
 
-Global Edge Deployment: El sitio se despliega automáticamente en una red global (CDN) en milisegundos.
+Esta presentación resume el diseño, implementación y despliegue de la infraestructura desarrollada durante el Proyecto Final de Administración de Sistemas Informáticos en Red (ASIR).
 
-🌐 Enlace de Producción
-Puedes ver la presentación interactiva en tiempo real aquí:
-👉 https://asir-infrastructure-presentation.netlify.app
+A través de diferentes secciones se muestran:
+
+* Arquitectura de la solución.
+* Infraestructura desplegada.
+* Tecnologías utilizadas.
+* Configuración de servicios.
+* Diagramas y recursos visuales.
+* Resultados obtenidos durante el proyecto.
+
+---
+
+## Tecnologías utilizadas
+
+* HTML5
+* CSS3
+* JavaScript
+* GitHub
+* Netlify
+
+---
+
+## Estructura del proyecto
+
+```text
+.
+├── index.html
+├── css.css
+├── js.js
+├── LOGO.jpeg
+├── hipoant.png
+├── qr.html
+├── qr.jpeg
+└── unilogoo.jpg
+```
+
+---
+
+## Despliegue
+
+La presentación se encuentra publicada en Netlify y conectada a GitHub para facilitar su acceso y actualización.
+
+---
+
+## Lo que he practicado
+
+* Diseño de presentaciones web interactivas.
+* Organización y documentación de proyectos técnicos.
+* Desarrollo web con HTML, CSS y JavaScript.
+* Publicación de sitios estáticos.
+* Control de versiones con Git y GitHub.
+* Despliegue continuo mediante Netlify.
+
+---
+
+## Autora
+
+**Isabella**
+
+Estudiante de Administración de Sistemas Informáticos en Red (ASIR).
